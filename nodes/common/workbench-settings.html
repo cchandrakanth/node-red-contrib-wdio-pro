@@ -1,0 +1,71 @@
+<script type="text/javascript">
+   
+    RED.nodes.registerType('workbench-settings', {
+        category: 'RPA_Testing',
+        color: '#4682B4',
+        defaults: {
+            name: { value: '' },
+            log: { value: 'log', validation: RED.validators.typedInput("logType")},
+            logType: {value: ''},
+            pageAction: {value: 'page'},
+            options: { value: '' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'cog.svg',
+        label: function () {
+            return this.name || 'workbench settings'
+        },
+        oneditprepare: function () {
+            $('#node-input-log').typedInput({
+                default: 'global',
+                typeField: $('#node-input-logType'),
+                types: ['msg','flow','global']
+            })
+
+            $("#node-input-options").typedInput({
+                types: [
+                    {
+                        value: "pageConfig",
+                        multiple: "true",
+                        options: [
+                            // { value: "PAGE", label: "PAGE" },
+                            // { value: "ACTION", label: "ACTION" },
+                            { value: "AbortOnError", label: "AbortOnError" },
+                            { value: "PageHealth", label: "PageHealth" },
+                            { value: "Create", label: "Create" },
+                            { value: "Read", label: "Read" },
+                            { value: "Update", label: "Update" },
+                            { value: "Delete", label: "Delete" },
+                            { value: "BusinessRule", label: "BusinessRule" },
+                        ]
+                    }
+                ]
+            })
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="workbench-settings">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name </label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-log"><i class="fa fa-tasks"></i> Log </label>
+        <input id="node-input-log" name="node-input-log" type="text">
+        <input type="hidden" id="node-input-logType" >
+    </div>
+    <div class="form-row">
+        <label for="node-input-pageAction"><i class="fa fa-tag"></i> Page/Action </label>
+        <select type="text" id="node-input-pageAction" style="width:70%;" required>
+            <option value="">Select</option>
+            <option value="page">Page</option>
+            <option value="action">Action</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-options"><i class="fa fa-tag"></i> Options </label>
+        <input type="text" id="node-input-options" >
+    </div>
+</script>

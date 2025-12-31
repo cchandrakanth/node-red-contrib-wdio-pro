@@ -1,0 +1,333 @@
+<script type="text/javascript">
+
+  function setCustomTypes_2() {
+    var browser = { value: "browser", label: "chrome browser", hasValue: false }
+    var desktop = { value: "desktop", label: "windows platfom", hasValue: false }
+    var func = { value: 'func', label: "function", hasValue: false }
+
+    $('#node-input-save').typedInput({
+      default: 'desktop',
+      typeField: $('#node-input-saveType'),
+      types: ['msg', 'flow', 'global', browser, desktop]
+    });
+
+    $('#node-input-log').typedInput({
+      default: 'global',
+      typeField: $('#node-input-logType'),
+      types: ['msg', 'flow', 'global']
+    });
+
+    $('#node-input-param1').typedInput({
+      default: 'str',
+      typeField: $('#node-input-param1Type'),
+      types: ['msg', 'flow', 'global', 'str']
+    });
+
+    $('#node-input-param2').typedInput({
+      default: 'str',
+      typeField: $('#node-input-param2Type'),
+      types: ['msg', 'flow', 'global', 'str', 'json']
+    });
+
+  }
+
+  RED.nodes.registerType('desktop-element', {
+    category: 'RPA_Testing',
+    color: '#4682B4',
+    defaults: {
+      name: { value: '' },
+      save: { value: '', validate: RED.validators.typedInput("saveType") },
+      saveType: { value: '' },
+      log: { value: 'log', validate: RED.validators.typedInput("logType") },
+      logType: { value: '' },
+      using: { value: '' },
+      param1: { value: '', validate: RED.validators.typedInput("param1Type") },
+      param1Type: { value: '' },
+      action: { value: '' },
+      param2: { value: '', validate: RED.validators.typedInput("param8Type") },
+      param2Type: { value: '' },
+      captureData: { value: [] },
+      assertionData: { value: [] },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-desktop',
+    label: function () {
+      return this.name || 'desktop element'
+    },
+    oneditprepare: function () {
+      var that = this
+      var tabs = RED.tabs.create({
+        id: "element-tabs",
+        onchange: function (tab) {
+          $("#element-tabs-content").children().hide();
+          $("#" + tab.id).show();
+        }
+      });
+      tabs.addTab({
+        id: "element-tab-element",
+        label: that._("Element")
+      });
+      tabs.addTab({
+        id: "element-tab-capture",
+        label: that._("Capture")
+      });
+      tabs.addTab({
+        id: "element-tab-assertions",
+        label: that._("Assertions")
+      });
+      tabs.activateTab("element-tab-actionTabs");
+
+      setCustomTypes_2()
+
+      $('#node-input-capture-container').css('min-height', '250px').css('min-width', '450px').editableList({
+        addItem: function (container, index, data) {
+
+          container.css({
+            overflow: 'hidden',
+            whiteSpace: 'nowrap'
+          });
+
+          let fragment = document.createDocumentFragment();
+          var row = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+          var selectField = $('<select/>', { class: "node-input-capture-condition", style: "width:25%; margin-right:10px;" }).appendTo(row);
+          var selectOptions = [
+            { v: "", l: 'Select' },
+            { v: "screenshot", l: 'Screenshot' },
+            { v: "getWindowSize", l: 'Get Window Size' }
+          ];
+          for (var i = 0; i < selectOptions.length; i++) {
+            selectField.append($("<option></option>").val(selectOptions[i].v).text(selectOptions[i].l));
+          }
+
+          var propertyName = $('<input/>', { class: "node-input-capture-property", type: "text", style: 'width:70%' })
+            .appendTo(row)
+            .typedInput({
+              default: 'msg',
+              types: ['msg', 'flow', 'global'],
+              typeField: ".node-input-rule-propertyType"
+            });
+
+          var row1 = $('<div />', { style: "display:flex;margin-top:10px;" }).appendTo(fragment);
+          var value = $('<label style="width:25%; text-align:right; padding-right:10px;"><b>Value </b></label>').appendTo(row1);
+          var property2Name = $('<input/>', { class: "node-input-capture-property2", type: "text", style: 'width:70%;margin-top:5px;' })
+            .appendTo(row1)
+            .typedInput({
+              default: 'str',
+              types: ['msg', 'flow', 'global', 'str', 'bool'],
+              typeField: ".node-input-rule-property2Type"
+            });
+
+          selectField.on('change', function () {
+            let val = $(this).val()
+            if (['screenshot', 'getWindowSize'].includes(val)) {
+              row1.hide();
+            }
+            else {
+              row1.show();
+            }
+          })
+          property2Name.typedInput('value', data.prop2);
+          property2Name.typedInput('type', data.prop2Type);
+          propertyName.typedInput('value', data.prop1);
+          propertyName.typedInput('type', data.prop1Type);
+          selectField.val(data.condition)
+          selectField.trigger('change')
+          container.append(fragment)
+        },
+        removable: true,
+        sortable: true
+      })
+
+      $('#node-input-capture-container').editableList('addItems', this.captureData)
+
+      $('#node-input-assertions-container').css('min-height', '325px').css('min-width', '600px').editableList({
+        addItem: function (container, index, data) {
+
+          container.css({
+            overflow: 'hidden',
+            whiteSpace: 'nowrap'
+          });
+
+          let fragment = document.createDocumentFragment();
+          var row = $('<div/>', { style: "display:block;" }).appendTo(fragment);
+
+          var assertionName = $('<input/>', { class: "node-input-assertionName", type: "text", style: 'width:65%;margin-right:10px;', placeholder: 'assertion name' })
+            .appendTo(row)
+
+          var label = $('<label style="color:orange;">Skip On Fail: </label>', {}).appendTo(row)
+          var skipOnFailSelect = $('<select/>', { class: "node-input-assertion-skipOnFail", style: "width:15%;" }).appendTo(row);
+          var skipOnFailOptions = [
+            { v: "no", l: ' NO ' },
+            { v: "yes", l: ' YES ' }
+          ];
+          for (var i = 0; i < skipOnFailOptions.length; i++) {
+            skipOnFailSelect.append($("<option></option>").val(skipOnFailOptions[i].v).text(skipOnFailOptions[i].l));
+          }
+
+          var blankRow = $('<br/>', { style: 'margin:2%;' }).appendTo(row)
+
+          var propertyExpect = $('<input/>', { class: "node-input-assertion-expect", type: "text", style: 'width:38%;margin:1%;', placeholder: 'expected' })
+            .appendTo(row)
+            .typedInput({
+              default: 'msg',
+              types: ['msg', 'flow', 'global'],
+              typeField: ".node-input-assertion-expectType"
+            });
+
+          var selectField = $('<select/>', { class: "node-input-assertion-condition", style: "width:18%; margin:1%;", placeholder: 'condition' }).appendTo(row);
+          var selectOptions = [
+            { v: "equal", l: ' == ' },
+            { v: "notEqual", l: ' != ' },
+            { v: "greater", l: ' > ' },
+            { v: "greaterEqual", l: ' >= ' },
+            { v: "less", l: ' < ' },
+            { v: "lessEqual", l: ' <= ' },
+            { v: "contains", l: 'contains' },
+            { v: "notContains", l: 'Not contains' }
+          ];
+          for (var i = 0; i < selectOptions.length; i++) {
+            selectField.append($("<option></option>").val(selectOptions[i].v).text(selectOptions[i].l));
+          }
+
+          var propertyActual = $('<input/>', { class: "node-input-assertion-actual", type: "text", style: 'width:38%;margin:1%;', placeholder: 'actual' })
+            .appendTo(row)
+            .typedInput({
+              default: 'str',
+              types: ['msg', 'flow', 'global', 'str', 'num', 'bool', 're', 'jsonata'],
+              typeField: ".node-input-assertion-actualtype"
+            });
+
+          assertionName.val(data.assertionName)
+          skipOnFailSelect.val(data.skipOnFail)
+          propertyExpect.typedInput('value', data.expectedValue);
+          propertyExpect.typedInput('type', data.expectedType);
+          selectField.val(data.condition)
+          propertyActual.typedInput('value', data.actualValue);
+          propertyActual.typedInput('type', data.actualType);
+          container.append(fragment)
+        },
+        removable: true,
+        sortable: true
+      })
+
+      $('#node-input-assertions-container').editableList('addItems', this.assertionData)
+
+    },
+    oneditsave: function () {
+      var capdata = $('#node-input-capture-container').editableList('items')
+      var assertData = $('#node-input-assertions-container').editableList('items')
+      var node = this
+      node.captureData = []
+      capdata.each(function () {
+        var temp = {}
+        temp.condition = $(this).find('.node-input-capture-condition').val()
+        temp.prop1Type = $(this).find('.node-input-capture-property').typedInput('type')
+        temp.prop1 = $(this).find('.node-input-capture-property').typedInput('value')
+        if (['screenshot', 'getWindowSize'].includes(temp.condition)) {
+          temp.prop2Type = $(this).find('.node-input-capture-property2').typedInput('type')
+          temp.prop2 = $(this).find('.node-input-capture-property2').typedInput('value')
+        }
+        node.captureData.push(temp)
+        
+      })
+      node.assertionData = []
+      assertData.each(function(){
+        var temp = {}
+        temp.assertionName = $(this).find('.node-input-assertionName').val()
+        temp.skipOnFail = $(this).find('.node-input-assertion-skipOnFail').val()
+        temp.expectedType = $(this).find('.node-input-assertion-expect').typedInput('type')
+        temp.expectedValue = $(this).find('.node-input-assertion-expect').typedInput('value')
+        temp.condition = $(this).find('.node-input-assertion-condition').val()
+        temp.actualType = $(this).find('.node-input-assertion-actual').typedInput('type')
+        temp.actualValue = $(this).find('.node-input-assertion-actual').typedInput('value')
+        console.log(temp)
+        node.assertionData.push(temp)
+      })
+    }
+  })
+</script>
+
+<script type="text/x-red" data-template-name="desktop-element">
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Name </label>
+      <input id="node-input-name" type="text">
+    </div>
+    <div class="form-row">
+      <label for="node-input-save"><i class="fa fa-tasks"></i> Driver </label>
+      <input type="hidden" id="node-input-saveType" >
+      <input style="width:70%" id="node-input-save" type="text">
+    </div>
+    <div class="form-row">
+      <label for="node-input-log"><i class="fa fa-tasks"></i> Log </label>
+      <input type="hidden" id="node-input-logType" >
+      <input style="width:70%" id="node-input-log" type="text">
+    </div>
+
+    <div class="form-row">
+      <ul style="min-width: 600px; margin-bottom: 20px;" id="element-tabs"></ul>
+    </div>
+
+    <div id="element-tabs-content" style="min-height: calc(100% - 95px);">
+
+        <div id="element-tab-element" style="display:none">
+          <div class="form-row">
+            <label for="node-input-using"><i class="fa fa-tasks"></i> Using </label>
+            <select type="text" id="node-input-using" style="width:70%;" >
+              <option value="">Select Value</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+    
+          <div class="form-row" id="custom-param1">
+            <label for="node-input-param1"><span> Locate Value </span><i class="fa fa-info-circle" aria-hidden="true" style="color:darkorange;margin-left:5px;"></i></label>
+            <input type="hidden" id="node-input-param1Type" >
+            <input style="width:70%" id="node-input-param1" type="text">
+          </div>
+
+          <div class="form-row">
+            <label for="node-input-action"><i class="fa fa-tasks"></i> Action </label>
+            <select type="text" id="node-input-action" style="width:70%;" >
+              <option value="">Select Value</option>
+              <option value="click">Click</option>
+              <option value="sendKeys">Send Keys</option>
+              <option value="doubleClick">Double Click</option>
+            </select>
+          </div>
+    
+          <div class="form-row" id="custom-param2">
+            <label for="node-input-param2"><span> Param 2 </span><i class="fa fa-info-circle" aria-hidden="true" style="color:darkorange;margin-left:5px;"></i></label>
+            <input type="hidden" id="node-input-param2Type" >
+            <input style="width:70%" id="node-input-param2" type="text">
+          </div>
+        </div>
+    
+        <div id="element-tab-capture" style="display:none">
+          <style>
+            ol#node-input-rule-container .red-ui-typedInput-container {
+                flex:1;
+            }
+          </style>
+          
+          <div class="form-row node-input-capture-container-row">
+              <ol id="node-input-capture-container"></ol>
+          </div>
+        </div>
+        
+        <div id="element-tab-assertions" style="display:none">
+          <style>
+            ol#node-input-assertions-container .red-ui-typedInput-container {
+                flex:1;
+            }
+          </style>
+          
+          <div class="form-row node-input-assertions-container-row">
+              <ol id="node-input-assertions-container"></ol>
+          </div>
+        </div>
+      </div>
+  </script>
+
+<script type="text/x-red" data-help-name="desktop-element">
+
+</script>

@@ -1,0 +1,457 @@
+<script type="text/javascript">
+
+  const subCategories = {
+    "browser": ['Set Cookies', 'Delete Cookies', 'Keys', 'Execute'],
+    "navigation": ['Navigate To', 'Back', 'Forward', 'Refresh'],
+    "window": ['New Window', 'Set Window Size', 'Switch Window', 'Maximize'],
+    "wait": ["Pause", "Set Timeout", "Wait Until"]
+  }
+
+  const param1 = {
+    setCookies: {
+      name: "Cookies",
+      title: `Array of cookie name and values. \nEg: ${JSON.stringify([{ name: 'test2', value: 'two' }, { name: 'test3', value: 'three' }], null, '\t')}`
+    },
+    deleteCookies: {
+      name: "Cookies",
+      title: `Array of cookie names. \nEg: ['test3']`
+    },
+    keys: {
+      name: "Keys",
+      title: `Array of cookie names. \nEg: ['Meta', 'a']`
+    },
+    execute: {
+      name: "Java Script",
+      title: `Currentlt, it is a string value. \nEg: 'document.queryselector('a').click'()'`
+    },
+    navigateTo: {
+      name: "URL",
+      title: `Full url or relative. \nEg: 'https://webdriver.io' or '/rootRelative'`
+    },
+    newWindow: {
+      name: "URL",
+      title: `Full url or relative. \nEg: 'https://webdriver.io' or '/rootRelative'`
+    },
+    setWindowSize: {
+      name: "Width",
+      title: `Pixel size. \nEg: 700`
+    },
+    switchWindow: {
+      name: "URL/Title",
+      title: `URL or Title to match of the window to switch.`
+    },
+    pause: {
+      name: "Time",
+      title: `Time in milliseconds.`
+    },
+    setTimeout: {
+      name: "Timeouts",
+      title: `Implicit, Page load & Script Timeouts. \nEg: ${JSON.stringify({ implicit: 30000, pageLoad: 30000, script: 10000 }, null, '\t')}`
+    },
+    waitUntil: {
+      name: "Condition",
+      title: `condition to wait on. Javascript function.`
+    }
+  }
+
+  const param2 = {
+    newWindow: {
+      name: "Options",
+      title: `New window options. \nEg: ${JSON.stringify({ windowName: 'WebdriverIO window', windowFeatures: 'width=420,height=230,resizable,scrollbars=yes,status=1' }, null, '\t')}`
+    },
+    setWindowSize: {
+      name: "Height",
+      title: `Pixel size. \nEg: 500`
+    },
+    waitUntil: {
+      name: "Options",
+      title: `Eg: ${JSON.stringify({ timeout: 5000, timeoutMsg: 'expected text to be different after 5s', interval: 1000 }, null, '\t')}`
+    }
+  }
+
+  String.prototype.toCamelCase = function () {
+    var str = this.toString()
+    return str.replace(/\s(.)/g, function ($1) { return $1.toUpperCase(); }).replace(/\s/g, '').replace(/^(.)/, function ($1) { return $1.toLowerCase(); });
+  }
+  
+  function setParams(val) {
+    var param1_Keys = Object.keys(param1)
+    var param2_Keys = Object.keys(param2)
+
+    if (param1_Keys.includes(val)) {
+      $('#custom-param1').find('span').eq(0).html(param1[val]['name'])
+      $('#custom-param1').find('i').attr('title', param1[val]['title'])
+      $('#custom-param1').show()
+    }
+    else {
+      $('#node-input-param1').val('')
+      $('#custom-param1').hide()
+    }
+
+    if (param2_Keys.includes(val)) {
+      $('#custom-param2').find('span').eq(0).html(param2[val]['name'])
+      $('#custom-param2').find('i').attr('title', param2[val]['title'])
+      $('#custom-param2').show()
+    }
+    else {
+      $('#node-input-param2').val('')
+      $('#custom-param2').hide()
+    }
+
+  }
+
+  function setSubcategory(node) {
+    $('#node-input-category').on('change', function () {
+      var val = $(this).val()
+
+      var options = []
+      if (val != 'noAction') {
+        options = subCategories[val]
+        $('#custom-subCategory').show()
+      }
+      else {
+        $('#custom-subCategory').hide()
+        $('#custom-param1').hide()
+        $('#custom-param2').hide()
+      }
+
+      if (Array.isArray(options) && options.length) {
+        var optionsHTML = ''
+        for (i = 0; i < options.length; i++) {
+          optionsHTML += `<option value="${options[i].toCamelCase()}">${options[i]}</option>`
+        }
+
+        $('#node-input-subCategory').html('<option value="">Select Value</option>')
+        $('#node-input-subCategory').append(optionsHTML)
+      }
+
+      if (val == node.category) {
+        $('#node-input-subCategory').val(node.subCategory)
+        setParams(node.subCategory)
+      }
+      else {
+        $('#node-input-subCategory').val('')
+        $('#custom-param1').hide()
+        $('#custom-param2').hide()
+      }
+    })
+  }
+
+  function setCustomTypes() {
+    var browser = { value: "browser", label: "chrome browser", hasValue: false }
+    var desktop = { value: "desktop", label: "windows platfom", hasValue: false }
+    var func = { value: 'func', label: "function", hasValue: false }
+
+    $('#node-input-save').typedInput({
+      default: 'browser',
+      typeField: $('#node-input-saveType'),
+      types: ['msg', 'flow', 'global', browser, desktop]
+    });
+
+    $('#node-input-log').typedInput({
+      default: 'global',
+      typeField: $('#node-input-logType'),
+      types: ['msg', 'flow', 'global']
+    });
+
+    $('#node-input-param1').typedInput({
+      default: 'str',
+      typeField: $('#node-input-param1Type'),
+      types: ['msg', 'flow', 'global', 'json', 'str', func]
+    });
+
+    $('#node-input-param2').typedInput({
+      default: 'str',
+      typeField: $('#node-input-param2Type'),
+      types: ['msg', 'flow', 'global', 'json', 'str', func]
+    });
+  }
+
+  function subCategoryChange(node) {
+    $('#node-input-subCategory').on('change', function () {
+      var val = $('#node-input-subCategory').val()
+      setParams(val)
+    })
+  }
+
+  RED.nodes.registerType('browser-actions', {
+    category: 'RPA_Testing',
+    color: '#4682B4',
+    defaults: {
+      name: { value: '' },
+      save: { value: '', validate: RED.validators.typedInput("saveType") },
+      saveType: { value: '' },
+      log: { value: 'log', validate: RED.validators.typedInput("logType") },
+      logType: { value: '' },
+      category: { value: '' },
+      subCategory: { value: '' },
+      param1: { value: '', validate: RED.validators.typedInput("param1Type") },
+      param1Type: { value: '' },
+      param2: { value: '', validate: RED.validators.typedInput("param2Type") },
+      param2Type: { value: '' },
+      captureData: { value: [] },
+      assertionData: {value:[]},
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'white-globe.png',
+    label: function () {
+      return this.name || 'browser action'
+    },
+    oneditprepare: function () {
+      var that = this
+      var tabs = RED.tabs.create({
+        id: "browser-tabs",
+        onchange: function (tab) {
+          $("#browser-tabs-content").children().hide();
+          $("#" + tab.id).show();
+        }
+      });
+      tabs.addTab({
+        id: "browser-tab-actions",
+        label: that._("Actions")
+      });
+      tabs.addTab({
+        id: "browser-tab-capture",
+        label: that._("Capture")
+      });
+      tabs.addTab({
+        id: "browser-tab-assertions",
+        label: that._("Assertions")
+      });
+      tabs.activateTab("browser-tab-actions");
+      
+      setCustomTypes()
+      setSubcategory(that)
+      subCategoryChange(that)
+
+      $('#node-input-capture-container').css('min-height', '325px').css('min-width', '600px').editableList({
+        addItem: function (container, index, data) {
+
+          container.css({
+            overflow: 'hidden',
+            whiteSpace: 'nowrap'
+          });
+
+          let fragment = document.createDocumentFragment();
+          var row = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+          var selectField = $('<select/>', { class: "node-input-capture-condition", style: "width:25%; margin-right:10px;" }).appendTo(row);
+          var selectOptions = [
+            { v: "", l: 'Select' },
+            { v: "getUrl", l: 'Get URL' },
+            { v: "screenshot", l: 'Screenshot' },
+            { v: "getWindowSize", l: 'Get Window Size' },
+            { v: "getCookies", l: 'Get Cookies' },
+            { v: "getTitle", l: 'Get Title' },
+            { v: "pageSource", l: 'Page Source' }
+          ];
+          for (var i = 0; i < selectOptions.length; i++) {
+            selectField.append($("<option></option>").val(selectOptions[i].v).text(selectOptions[i].l));
+          }
+
+
+          var propertyName = $('<input/>', { class: "node-input-capture-property", type: "text", style: 'width:70%' })
+            .appendTo(row)
+            .typedInput({
+              default: 'msg',
+              types: ['msg', 'flow', 'global'],
+              typeField: ".node-input-rule-propertyType"
+            });
+
+          propertyName.typedInput('value', data.value);
+          propertyName.typedInput('type', data.type);
+          selectField.val(data.condition)
+          container.append(fragment)
+        },
+        removable: true,
+        sortable: true
+      })
+
+      $('#node-input-capture-container').editableList('addItems', this.captureData)
+
+      $('#node-input-assertions-container').css('min-height', '325px').css('min-width', '600px').editableList({
+        addItem: function (container, index, data) {
+
+          container.css({
+            overflow: 'hidden',
+            whiteSpace: 'nowrap'
+          });
+
+          let fragment = document.createDocumentFragment();
+          var row = $('<div/>', { style: "display:block;" }).appendTo(fragment);
+
+          var assertionName = $('<input/>', { class: "node-input-assertionName", type: "text", style: 'width:65%;margin-right:10px;', placeholder: 'assertion name' })
+            .appendTo(row)
+
+          var label = $('<label style="color:orange;">Skip On Fail: </label>', {}).appendTo(row)
+          var skipOnFailSelect = $('<select/>', { class: "node-input-assertion-skipOnFail", style: "width:15%;"}).appendTo(row);
+          var skipOnFailOptions = [
+            { v: "no", l: ' NO ' },
+            { v: "yes", l: ' YES ' }
+          ];
+          for (var i = 0; i < skipOnFailOptions.length; i++) {
+              skipOnFailSelect.append($("<option></option>").val(skipOnFailOptions[i].v).text(skipOnFailOptions[i].l));
+          }
+
+          var blankRow = $('<br/>',{style: 'margin:2%;'}).appendTo(row)
+
+          var propertyExpect = $('<input/>', { class: "node-input-assertion-expect", type: "text", style: 'width:38%;margin:1%;', placeholder: 'expected' })
+            .appendTo(row)
+            .typedInput({
+              default: 'msg',
+              types: ['msg', 'flow', 'global'],
+              typeField: ".node-input-assertion-expectType"
+            });
+
+          var selectField = $('<select/>', { class: "node-input-assertion-condition", style: "width:18%; margin:1%;", placeholder:'condition' }).appendTo(row);
+          var selectOptions = [
+            { v: "equal", l: ' == ' },
+            { v: "notEqual", l: ' != ' },
+            { v: "greater", l: ' > ' },
+            { v: "greaterEqual", l: ' >= ' },
+            { v: "less", l: ' < ' },
+            { v: "lessEqual", l: ' <= ' },
+            { v: "contains", l: 'contains' },
+            { v: "notContains", l: 'Not contains' }
+          ];
+          for (var i = 0; i < selectOptions.length; i++) {
+              selectField.append($("<option></option>").val(selectOptions[i].v).text(selectOptions[i].l));
+          }
+
+          var propertyActual = $('<input/>', { class: "node-input-assertion-actual", type: "text", style: 'width:38%;margin:1%;', placeholder:'actual' })
+            .appendTo(row)
+            .typedInput({
+              default: 'str',
+              types: ['msg', 'flow', 'global','str','num', 'bool', 're', 'jsonata'],
+              typeField: ".node-input-assertion-actualtype"
+            });
+          
+          assertionName.val(data.assertionName)
+          skipOnFailSelect.val(data.skipOnFail)
+          propertyExpect.typedInput('value', data.expectedValue);
+          propertyExpect.typedInput('type', data.expectedType);
+          selectField.val(data.condition)
+          propertyActual.typedInput('value', data.actualValue);
+          propertyActual.typedInput('type', data.actualType);
+          container.append(fragment)
+        },
+        removable: true,
+        sortable: true
+      })
+
+      $('#node-input-assertions-container').editableList('addItems', this.assertionData)
+    
+    },
+    oneditsave: function () {
+      var capdata = $('#node-input-capture-container').editableList('items')
+      var assertData = $('#node-input-assertions-container').editableList('items')
+      var node = this
+      node.captureData = []
+      capdata.each(function () {
+        var temp = {}
+        temp.condition = $(this).find('.node-input-capture-condition').val()
+        temp.type = $(this).find('.node-input-capture-property').typedInput('type')
+        temp.value = $(this).find('.node-input-capture-property').typedInput('value')
+        node.captureData.push(temp)
+      })
+      node.assertionData = []
+      assertData.each(function(){
+        var temp = {}
+        temp.assertionName = $(this).find('.node-input-assertionName').val()
+        temp.skipOnFail = $(this).find('.node-input-assertion-skipOnFail').val()
+        temp.expectedType = $(this).find('.node-input-assertion-expect').typedInput('type')
+        temp.expectedValue = $(this).find('.node-input-assertion-expect').typedInput('value')
+        temp.condition = $(this).find('.node-input-assertion-condition').val()
+        temp.actualType = $(this).find('.node-input-assertion-actual').typedInput('type')
+        temp.actualValue = $(this).find('.node-input-assertion-actual').typedInput('value')
+        console.log(temp)
+        node.assertionData.push(temp)
+      })
+    }
+  })
+</script>
+
+<script type="text/x-red" data-template-name="browser-actions">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name </label>
+    <input id="node-input-name" type="text">
+  </div>
+  <div class="form-row">
+    <label for="node-input-save"><i class="fa fa-tasks"></i> Driver </label>
+    <input type="hidden" id="node-input-saveType" >
+    <input style="width:70%" id="node-input-save" type="text">
+  </div>
+  <div class="form-row">
+    <label for="node-input-log"><i class="fa fa-tasks"></i> Log </label>
+    <input type="hidden" id="node-input-logType" >
+    <input style="width:70%" id="node-input-log" type="text">
+  </div>
+
+  <div class="form-row">
+    <ul style="min-width: 600px; margin-bottom: 20px;" id="browser-tabs"></ul>
+  </div>
+
+  <div id="browser-tabs-content" style="min-height: calc(100% - 95px);">
+
+    <div id="browser-tab-actions" style="display:none">
+      <div class="form-row">
+        <label for="node-input-category"><i class="fa fa-tasks"></i> Category </label>
+        <select type="text" id="node-input-category" style="width:70%;" >
+          <option value="">Select Value</option>
+          <option value="browser">Browser</option>
+          <option value="navigation">Navigation</option>
+          <option value="window">Window</option>
+          <option value="wait">Wait</option>
+          <option value="noAction">No Action</option>
+        </select>
+      </div>
+      
+      <div class="form-row" id="custom-subCategory">
+        <label for="node-input-subCategory"><i class="fa fa-tasks"></i> SubCategory </label>
+        <select type="text" id="node-input-subCategory" style="width:70%;" >
+          <option value="">Select Value</option>
+        </select>
+      </div>
+
+      <div class="form-row" id="custom-param1">
+        <label for="node-input-param1"><span> Param 1 </span><i class="fa fa-info-circle" aria-hidden="true" style="color:darkorange;margin-left:5px;"></i></label>
+        <input type="hidden" id="node-input-param1Type" >
+        <input style="width:70%" id="node-input-param1" type="text">
+      </div>
+
+      <div class="form-row" id="custom-param2">
+        <label for="node-input-param2"><span> Param 2 </span><i class="fa fa-info-circle" aria-hidden="true" style="color:darkorange;margin-left:5px;"></i></label>
+        <input type="hidden" id="node-input-param2Type" >
+        <input style="width:70%" id="node-input-param2" type="text">
+      </div>
+    </div>
+
+    <div id="browser-tab-capture" style="display:none">
+      <style>
+        ol#node-input-rule-container .red-ui-typedInput-container {
+            flex:1;
+        }
+      </style>
+      
+      <div class="form-row node-input-capture-container-row">
+          <ol id="node-input-capture-container"></ol>
+      </div>
+    </div>
+    
+    <div id="browser-tab-assertions" style="display:none">
+      <style>
+        ol#node-input-assertions-container .red-ui-typedInput-container {
+            flex:1;
+        }
+      </style>
+      
+      <div class="form-row node-input-assertions-container-row">
+          <ol id="node-input-assertions-container"></ol>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="browser-actions">
+
+</script>

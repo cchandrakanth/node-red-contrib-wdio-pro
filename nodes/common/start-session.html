@@ -1,0 +1,116 @@
+<script type="text/javascript">
+    function setValue() {
+        return $('#node-input-killSession').val()
+    }
+
+    function hideCapabilities() {
+        var val = $('#node-input-saveType').val()
+        if (val == 'browser' || val == 'desktop') {
+            $('#row-capabilities').hide()
+            $('#node-input-capabilities').val('{}')
+        }
+        else {
+            $('#row-capabilities').show()
+        }
+    }
+
+    // var browser = {value:"browser", label: "chrome browser", hasValue: false}
+    // var desktop = {value:"desktop", label: "windows platfom", hasValue: false}
+
+    RED.nodes.registerType('start-session', {
+        category: 'RPA_Testing',
+        color: '#4682B4',
+        defaults: {
+            name: { value: '' },
+            save: { value: '', validate: RED.validators.typedInput("saveType") },
+            saveType: { value: '' },
+            providerUri: { value: '' },
+            log: { value: 'log', validate: RED.validators.typedInput("logType") },
+            logType: { value: '' },
+            capabilities: { value: '', validate: RED.validators.typedInput("capabilitiesType") },
+            capabilitiesType: { value: '' },
+            logLevel: { value: 'error' },
+            killSession: { value: setValue() }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'inject.svg',
+        label: function () {
+            return this.name || 'start session'
+        },
+        oneditprepare: function () {
+            setValue();
+            $('#node-input-capabilities').typedInput({
+                default: 'json',
+                typeField: $('#node-input-capabilitiesType'),
+                types: ['msg', 'flow', 'global', 'json']
+            });
+
+            hideCapabilities();
+            var browser = { value: "browser", label: "chrome browser", hasValue: false }
+            var desktop = { value: "desktop", label: "windows platfom", hasValue: false }
+
+            $('#node-input-save').typedInput({
+                default: 'browser',
+                typeField: $('#node-input-saveType'),
+                types: ['msg', 'flow', 'global', browser, desktop]
+            });
+
+            $('#node-input-log').typedInput({
+                default: 'global',
+                typeField: $('#node-input-logType'),
+                types: ['msg', 'flow', 'global']
+            });
+
+            $('#node-input-save').on('change', function () {
+                hideCapabilities()
+            });
+        }
+    })
+
+</script>
+
+<script type="text/x-red" data-template-name='start-session'>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input id="node-input-name" type="text">
+    </div>
+    <div class="form-row">
+        <label for="node-input-save"><i class="fa fa-tasks"></i> Driver </label>
+        <input id="node-input-save" name="node-input-save" type="text">
+        <input type="hidden" id="node-input-saveType" >
+    </div>
+    <div class="form-row">
+        <label for="node-input-providerUri" title="msg.providerUri"><i class="fa fa-globe"></i> Webdriver Host URI </label>
+        <input id="node-input-providerUri" type="text" placeholder="https://localhost or provider URL">
+    </div>
+    <div class="form-row">
+        <label for="node-input-log"><i class="fa fa-tasks"></i> Log </label>
+        <input id="node-input-log" name="node-input-log" type="text">
+        <input type="hidden" id="node-input-logType" >
+    </div>
+    <div class="form-row" id="row-capabilities">
+        <label for="node-input-capabilities"><i class="fa fa-globe"></i> Capabilities </label>
+        <input id="node-input-capabilities" name="node-input-capabilities" type="text" placeholder='{"capabilities":{"browserName":"chrome"}}'> 
+        <input type="hidden" id="node-input-capabilitiesType" >
+    </div>
+    <div class="form-row">
+        <label for="node-input-logLevel"><i class="fa fa-tasks"></i> Log Level </label>
+        <select type="text" id="node-input-logLevel" style="width:70%;">
+            <option value="trace">Trace</option>
+            <option value="debug">Debug</option>
+            <option value="info">Info</option>
+            <option value="warn">Warn</option>
+            <option value="error" selected>Error</option>
+            <option value="silent">Silent</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-killSession"><i class="fa fa-tasks"></i> Kill existing session on flow deploy </label>
+        <input id="node-input-killSession" type="checkbox" onclick="setValue()" style="width:auto;">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name='start-session'>
+
+</script>
