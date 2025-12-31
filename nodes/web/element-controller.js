@@ -2,7 +2,7 @@ const common = require('../utils')
 const utils = require('./utils/element')
 
 module.exports = function(RED) {
-  function browserElement(config) {
+  function elementController(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.save = config.save
@@ -101,5 +101,5 @@ module.exports = function(RED) {
       }
     })
   }
-  RED.nodes.registerType('browser-element', browserElement)
+  RED.nodes.registerType('element-controller', elementController)
 }

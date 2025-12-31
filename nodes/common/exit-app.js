@@ -1,7 +1,7 @@
 const utils = require('../utils')
 
 module.exports = function(RED) {
-  function deleteSession(config) {
+  function exitApp(config) {
     RED.nodes.createNode(this, config)
     this.save = config.save
     this.saveType = config.saveType
@@ -33,5 +33,5 @@ module.exports = function(RED) {
       }
     })
   }
-  RED.nodes.registerType('close-session', deleteSession)
+  RED.nodes.registerType('exit-app', exitApp)
 }

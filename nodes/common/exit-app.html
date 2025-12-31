@@ -1,6 +1,6 @@
 <script type="text/javascript">
     
-    RED.nodes.registerType('close-session',{
+    RED.nodes.registerType('exit-app',{
         category: 'RPA_Testing',
         color: '#4682B4',
         defaults:{
@@ -14,7 +14,7 @@
         outputs: 1,
         icon: 'font-awesome/fa-times-circle',
         label: function(){
-            return this.name || 'close session'
+            return this.name || 'exit-app'
         },
         oneditprepare: function(){
             var browser = {value:"browser", label: "chrome browser", hasValue: false}
@@ -36,7 +36,7 @@
 
 </script>
     
-<script type="text/x-red" data-template-name='close-session'>
+<script type="text/x-red" data-template-name='exit-app'>
     <div class="form-row">
         <label for="node-input-save"><i class="fa fa-tasks"></i> Driver </label>
         <input type="hidden" id="node-input-saveType" >
@@ -53,6 +53,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name='close-session'>
+<script type="text/x-red" data-help-name='exit-app'>
 
 </script>

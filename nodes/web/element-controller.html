@@ -232,7 +232,7 @@
     });
   }
 
-  RED.nodes.registerType('browser-element', {
+  RED.nodes.registerType('element-controller', {
     category: 'RPA_Testing',
     color: '#4682B4',
     defaults: {
@@ -274,7 +274,7 @@
     outputs: 1,
     icon: 'white-globe.png',
     label: function () {
-      return this.name || 'browser element'
+      return this.name || 'element controller'
     },
     oneditprepare: function () {
       var that = this
@@ -497,7 +497,7 @@
   })
 </script>
 
-<script type="text/x-red" data-template-name="browser-element">
+<script type="text/x-red" data-template-name="element-controller">
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name </label>
     <input id="node-input-name" type="text">
@@ -721,6 +721,6 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="browser-element">
+<script type="text/x-red" data-help-name="element-controller">
 
 </script>

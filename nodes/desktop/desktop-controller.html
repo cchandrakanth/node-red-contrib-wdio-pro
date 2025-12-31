@@ -31,7 +31,7 @@
 
   }
 
-  RED.nodes.registerType('desktop-element', {
+  RED.nodes.registerType('desktop-controller', {
     category: 'RPA_Testing',
     color: '#4682B4',
     defaults: {
@@ -53,7 +53,7 @@
     outputs: 1,
     icon: 'font-awesome/fa-desktop',
     label: function () {
-      return this.name || 'desktop element'
+      return this.name || 'desktop controller'
     },
     oneditprepare: function () {
       var that = this
@@ -248,7 +248,7 @@
   })
 </script>
 
-<script type="text/x-red" data-template-name="desktop-element">
+<script type="text/x-red" data-template-name="desktop-controller">
     <div class="form-row">
       <label for="node-input-name"><i class="fa fa-tag"></i> Name </label>
       <input id="node-input-name" type="text">
@@ -328,6 +328,6 @@
       </div>
   </script>
 
-<script type="text/x-red" data-help-name="desktop-element">
+<script type="text/x-red" data-help-name="desktop-controller">
 
 </script>

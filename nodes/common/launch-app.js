@@ -1,7 +1,7 @@
 const utils = require('../utils')
 
 module.exports = function(RED) {
-  function newSession(config) {
+  function launchApp(config) {
     RED.nodes.createNode(this, config)
     this.save = config.save
     this.saveType = config.saveType
@@ -68,7 +68,7 @@ module.exports = function(RED) {
     })
   }
 
-  RED.nodes.registerType('start-session', newSession)
+  RED.nodes.registerType('launch-app', launchApp)
 }
 
 const parseUri = async (uri, node) => {

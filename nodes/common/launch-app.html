@@ -17,7 +17,7 @@
     // var browser = {value:"browser", label: "chrome browser", hasValue: false}
     // var desktop = {value:"desktop", label: "windows platfom", hasValue: false}
 
-    RED.nodes.registerType('start-session', {
+    RED.nodes.registerType('launch-app', {
         category: 'RPA_Testing',
         color: '#4682B4',
         defaults: {
@@ -36,7 +36,7 @@
         outputs: 1,
         icon: 'inject.svg',
         label: function () {
-            return this.name || 'start session'
+            return this.name || 'launch app'
         },
         oneditprepare: function () {
             setValue();
@@ -70,7 +70,7 @@
 
 </script>
 
-<script type="text/x-red" data-template-name='start-session'>
+<script type="text/x-red" data-template-name='launch-app'>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input id="node-input-name" type="text">
@@ -111,6 +111,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name='start-session'>
+<script type="text/x-red" data-help-name='launch-app'>
 
 </script>
