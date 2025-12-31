@@ -1,0 +1,190 @@
+[
+    {
+        "id": "068466824e2dbca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c25d9afdfafe4e71",
+        "type": "inject",
+        "z": "068466824e2dbca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "5439c28c804d2565"
+            ]
+        ]
+    },
+    {
+        "id": "825584b2a17e9660",
+        "type": "inject",
+        "z": "068466824e2dbca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "9b912dbceea24b52"
+            ]
+        ]
+    },
+    {
+        "id": "5439c28c804d2565",
+        "type": "launch-app",
+        "z": "068466824e2dbca8",
+        "name": "",
+        "save": "",
+        "saveType": "browser",
+        "providerUri": "",
+        "log": "log",
+        "logType": "global",
+        "capabilities": "{}",
+        "capabilitiesType": "json",
+        "logLevel": "error",
+        "killSession": false,
+        "x": 350,
+        "y": 120,
+        "wires": [
+            [
+                "07af8a82754b3568"
+            ]
+        ]
+    },
+    {
+        "id": "07af8a82754b3568",
+        "type": "app-controller",
+        "z": "068466824e2dbca8",
+        "name": "",
+        "save": "",
+        "saveType": "browser",
+        "log": "log",
+        "logType": "global",
+        "category": "navigation",
+        "subCategory": "navigateTo",
+        "param1": "https://www.google.com",
+        "param1Type": "str",
+        "param2": "",
+        "param2Type": "str",
+        "captureData": [],
+        "assertionData": [],
+        "x": 560,
+        "y": 120,
+        "wires": [
+            [
+                "91dbaf071868d6de"
+            ]
+        ]
+    },
+    {
+        "id": "91dbaf071868d6de",
+        "type": "element-controller",
+        "z": "068466824e2dbca8",
+        "name": "",
+        "save": "",
+        "saveType": "browser",
+        "log": "log",
+        "logType": "global",
+        "find": "multiple",
+        "using": "id",
+        "param1": "",
+        "param1Type": "str",
+        "findBy": "",
+        "selectors": [
+            {
+                "using": "id",
+                "value": "test"
+            },
+            {
+                "using": "name",
+                "value": "q"
+            }
+        ],
+        "param2": "",
+        "param2Type": "",
+        "look": "",
+        "param3": "",
+        "param3Type": "",
+        "wait": "",
+        "param4": "",
+        "param4Type": "str",
+        "param5": "",
+        "param5Type": "str",
+        "check": "",
+        "param6": "element",
+        "param6Type": "msg",
+        "param7": false,
+        "exception": "",
+        "action": "setValue",
+        "param8": "chandrakanth chintada",
+        "param8Type": "str",
+        "param9": "",
+        "param9Type": "str",
+        "captureData": [],
+        "assertionData": [],
+        "x": 810,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9b912dbceea24b52",
+        "type": "exit-app",
+        "z": "068466824e2dbca8",
+        "name": "",
+        "save": "",
+        "saveType": "browser",
+        "log": "log",
+        "logType": "global",
+        "x": 380,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "07985742649c8b38",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-wdio-pro": "0.2.5"
+        }
+    }
+]
