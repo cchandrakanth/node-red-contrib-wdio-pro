@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-wdio-pro",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Nodes that are useful to do RPA/automation process.",  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -8,7 +8,7 @@
   "author": "chandrakanth chintada",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/cchandrakanth/node-red-contrib-wdio-pro.git"
   },
   "license": "CC-BY-NC-SA-4.0",
   "dependencies": {
