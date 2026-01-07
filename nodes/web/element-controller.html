@@ -77,7 +77,7 @@
     })
   }
 
-   const multiSelectorsUI = (node) => {
+   const multiSelectorsProUI = (node) => {
         $('#node-input-selectors-container').css('min-height', '50vh').css('min-width', '600px').editableList({
             addItem: function (container, index, data) {
                 container.css({
@@ -324,7 +324,7 @@
       setLocateTab(that)
       setConditionTab(that)
       setActionTab(that)
-      multiSelectorsUI(that)
+      multiSelectorsProUI(that)
 
       $('#node-input-capture-container').css('min-height', '250px').css('min-width', '450px').editableList({
         addItem: function (container, index, data) {
